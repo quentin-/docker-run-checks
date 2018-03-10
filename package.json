@@ -1,0 +1,7 @@
+{
+  "name": "graphql-schema-checkr",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Quentin Cuvillier <cuvillier.quentin@gmail.com>",
+  "license": "MIT"
+}
