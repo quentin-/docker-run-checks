@@ -38,12 +38,6 @@ class ImageCard extends React.Component {
     runLogs: PropTypes.arrayOf(PropTypes.string)
   };
 
-  state = {};
-
-  handleExpandClick = () => {
-    this.setState({ expanded: !this.state.expanded });
-  };
-
   render() {
     let avatarStyle;
 
