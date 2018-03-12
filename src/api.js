@@ -87,7 +87,7 @@ router.post("/checks", (req, res) => {
 
   job.save(function(err) {
     !err
-      ? res.status(201).send({ job: job.id })
+      ? res.status(201).send({ check: job.id })
       : res.status(500).send({ error: "could not create job" });
   });
 });
