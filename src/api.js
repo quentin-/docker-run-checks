@@ -8,21 +8,24 @@ const docker = new Docker();
 const queue = kue.createQueue();
 const router = express.Router();
 
+const RunCommand = require("./commands/run");
+const PullCommand = require("./commands/pull");
 const CheckWorker = require("./workers/check.js");
-const checkWorker = new CheckWorker({ docker: docker, queue: queue });
 
-checkWorker.listen();
+const runner = new RunCommand({ docker });
+const puller = new PullCommand({ docker });
+
+const worker = new CheckWorker({ queue, puller, runner });
+
+worker.listen();
 
 router.get("/checks/:id", (req, res) => {
   kue.Job.get(req.params.id, function(err, job) {
     if (err) {
-      res
-        .status(404)
-        .send({ error: `cannot find job with id ${req.params.id}` });
+      res.status(404);
+      res.send({ error: `cannot find job with id ${req.params.id}` });
       return;
     }
-
-    console.log(job);
 
     const checks = job.data.images.map(image => {
       let check = {
@@ -80,7 +83,7 @@ router.post("/checks", (req, res) => {
 
   // add uuids to image items.
   const images = result.value.images.map(i => ({ ...i, uuid: uuid() }));
-  const job = checkWorker.create({ images, webhooks: result.value.webhooks });
+  const job = worker.enqueue({ images, webhooks: result.value.webhooks });
 
   job.save(function(err) {
     !err

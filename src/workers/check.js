@@ -8,11 +8,11 @@ const PullCommand = require("../commands/pull");
 class CheckWorker {
   constructor(options) {
     this.queue = options.queue;
-    this.runner = new RunCommand({ docker: options.docker });
-    this.puller = new PullCommand({ docker: options.docker });
+    this.runner = options.runner;
+    this.puller = options.puller;
   }
 
-  create(data) {
+  enqueue(data) {
     return this.queue.create("check", data);
   }
 
