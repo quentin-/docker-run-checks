@@ -1,6 +1,6 @@
 ## docker-run-checks
 
-Webservice that pulls and run docker commands.
+A webservice that pulls images, run commands, and report executions success.
 
 #### Creating a new check:
 
@@ -10,82 +10,75 @@ curl -X POST http://localhost:3000/api/v1/checks \
      -d '{
            "images": [
              {
-               "name": "ubuntu:latest",
-               "cmd": [ "ls", "-l", "/bin" ]
+               "name": "acmeinc/web-client:master",
+               "cmd": [
+                  "./bin/check-graphql-schema",
+                  "-url", "https://ci.acmeinc.com/gql-schemas/[tag].schema.json"
+                ]
              },
              {
-               "name": "ubuntu:latest",
-               "cmd": [ "ls", "-l", "/bar" ]
-             }
+               "name": "acmeinc/ios-clint:master",
+               "cmd": [
+                  "./bin/check-graphql-schema",
+                  "-url", "https://ci.acmeinc.com/gql-schemas/[tag].schema.json"
+                ]
+             },
            ],
            "webhooks": {
-             "success": "https://localhost:8080g? success=1",
-             "failure": "https://localhost:8080g? failure=1"
+             "success": "https://ci.acmeinc.com/graphql-schema-check?success=1&commit=[tag]",
+             "failure": "https://ci.acmeinc.com/graphql-schema-check?failure=1&commit=[tag]"
            }
          }'
 ```
 
 ```json
-{ "check": 4 }
+{ "check": 1 }
 ```
 
 #### Getting a check result:
 
 ```bash
-curl http://localhost:3000/api/v1/checks/4
+curl http://localhost:3000/api/v1/checks/1
 ```
 
 ```json
 {
   "checks": [
     {
-      "pull_logs": [],
-      "name": "ubuntu:latest",
-      "cmd": ["ls", "-l", "/"],
-      "executation_status_code": 0,
-      "execution_logs": [
-        "total 64",
-        "drwxr-xr-x   2 root root 4096 Feb 28 19:14 bin",
-        "drwxr-xr-x   2 root root 4096 Apr 12  2016 boot",
-        "drwxr-xr-x   5 root root  360 Mar 12 00:24 dev",
-        "drwxr-xr-x   1 root root 4096 Mar 12 00:24 etc",
-        "drwxr-xr-x   2 root root 4096 Apr 12  2016 home",
-        "drwxr-xr-x   8 root root 4096 Sep 13  2015 lib",
-        "drwxr-xr-x   2 root root 4096 Feb 28 19:14 lib64",
-        "drwxr-xr-x   2 root root 4096 Feb 28 19:13 media",
-        "drwxr-xr-x   2 root root 4096 Feb 28 19:13 mnt",
-        "drwxr-xr-x   2 root root 4096 Feb 28 19:13 opt",
-        "dr-xr-xr-x 164 root root    0 Mar 12 00:24 proc",
-        "drwx------   2 root root 4096 Feb 28 19:14 root",
-        "drwxr-xr-x   1 root root 4096 Feb 28 19:14 run",
-        "drwxr-xr-x   1 root root 4096 Mar  6 22:17 sbin",
-        "drwxr-xr-x   2 root root 4096 Feb 28 19:13 srv",
-        "dr-xr-xr-x  13 root root    0 Mar 11 06:59 sys",
-        "drwxrwxrwt   2 root root 4096 Feb 28 19:14 tmp",
-        "drwxr-xr-x   1 root root 4096 Feb 28 19:13 usr",
-        "drwxr-xr-x   1 root root 4096 Feb 28 19:14 var"
+      "name": "acmeinc/web-client:master",
+      "cmd": [
+        "./bin/check-graphql-schema",
+        "--url",
+        "https://ci.acmeinc.com/gql-schemas/[tag].schema.json"
       ],
+      "executation_status_code": 0,
+      "execution_logs": ["ok"],
       "download_logs": [
-        "Pulling from library/ubuntu",
-        "Pulling from library/ubuntu",
+        "Pulling from acmeinc/web-client:master",
         "Digest: sha256:e348fbbea0e0a0a49bd6",
-        "Status: Image is up to date for ubuntu:latest",
-        "Digest: sha256:e348fbbea0e0a0a49bd6",
-        "Status: Image is up to date for ubuntu:latest"
+        "Status: Image is up to date for acmeinc/web-client:master"
       ]
     },
     {
-      "name": "ubuntu:latest",
-      "cmd": ["ls", "-l", "/bar"],
-      "executation_status_code": 2,
-      "execution_logs": ["ls: cannot access '/bar': No such file or directory"],
+      "name": "acmeinc/ios-client:master",
+      "cmd": [
+        "./bin/check-graphql-schema",
+        "--url",
+        "https://ci.acmeinc.com/gql-schemas/[tag].schema.json"
+      ],
+      "executation_status_code": 1,
+      "execution_logs": [
+        "/Users/user/acmeinc/ios-client/queries/someQuery.gql",
+
+        "8:5  error  Cannot query field \"someRemovedFieldA\" on type \"SomeType\"  graphql/template-strings",
+        "8:5  error  Cannot query field \"someRemovedFieldB\" on type \"SomeType\"  graphql/template-strings",
+
+        "✖ 2 problem (1 error, 0 warnings)"
+      ],
       "download_logs": [
-        "Pulling from library/ubuntu",
-        "Pulling from library/ubuntu",
-        "Digest: sha256:e348fbbea0e0a0e73ab0370da49bd6",
-        "Status: Image is up to date for ubuntu:latest",
-        "Digest: sha256:e348fbbea0e0a0e73ab0370da49bd6",
-        "Status: Image is up to date for ubuntu:latest"
+        "Pulling from acmeinc/ios-client:master",
+        "Digest: sha256:e348fbbea0e0a0a49bd6",
+        "Status: Image is up to date for acmeinc/ios-client:master"
       ]
     }
   ],
@@ -95,6 +88,4 @@ curl http://localhost:3000/api/v1/checks/4
 }
 ```
 
-A web UI is also available to see a job status:
-
-<img width="1137" alt="screen shot 2018-03-11 at 5 44 34 pm" src="https://user-images.githubusercontent.com/2709086/37260736-ebbfdd00-2553-11e8-9edd-bc15ff3e5e82.png">
+<img width="1270" alt="screen shot 2018-03-11 at 9 13 39 pm" src="https://user-images.githubusercontent.com/2709086/37265521-2fafd55c-2571-11e8-9f4a-14a343c34591.png">
