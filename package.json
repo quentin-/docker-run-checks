@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "test": "yarn jest",
+    "lint": "eslint src cmd pages",
     "start": "nodemon cmd/server.js",
     "start:prod": "yarn next build && node cmd/server.js",
-    "prettier:check": "prettier-check 'src/**/*.js' '*.js'",
-    "prettier:fix": "prettier --write 'src/**/*.js' '*.js'"
+    "prettier:fix": "yarn prettier --write 'src/**/*.js' '*.js'"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -30,6 +30,17 @@
     "winston": "^3.0.0-rc2"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.2",
+    "eslint": "^4.18.2",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-babel": "^4.1.2",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jest": "^21.14.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-standard": "^3.0.1",
     "jest": "^22.4.2",
     "nodemon": "^1.17.1",
     "prettier": "^1.11.1"

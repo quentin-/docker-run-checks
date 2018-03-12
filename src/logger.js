@@ -1,7 +1,7 @@
 const winston = require("winston");
 
 function formatParams(info) {
-  const { timestamp, level, message, ...args } = info;
+  const { timestamp, level, message } = info;
   const ts = timestamp.slice(0, 19).replace("T", " ");
 
   return `${ts} ${level}: ${message.trim()}`;

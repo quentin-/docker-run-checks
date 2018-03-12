@@ -1,15 +1,8 @@
 import React from "react";
-import Link from "next/link";
+import PropTypes from "prop-types";
 import fetch from "isomorphic-unfetch";
 import Avatar from "material-ui/Avatar";
-import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import { withStyles } from "material-ui/styles";
-import Typography from "material-ui/Typography";
-import IconButton from "material-ui/IconButton";
-import Collapse from "material-ui/transitions/Collapse";
-import ExpandMoreIcon from "material-ui-icons/ExpandMore";
-import Card, { CardHeader, CardContent } from "material-ui/Card";
+import Card, { CardHeader } from "material-ui/Card";
 
 const styles = {
   root: {
@@ -17,12 +10,13 @@ const styles = {
     padding: "12px"
   },
   avatar: {
+    pending: {
+      backgroundColor: "#fff78c"
+    },
     failed: {
-      border: "1px solid #ff8989",
       backgroundColor: "#ffb2b2"
     },
     success: {
-      border: "1px solid #89ff9a",
       backgroundColor: "#b2ffbd"
     }
   },
@@ -37,6 +31,13 @@ const styles = {
 };
 
 class ImageCard extends React.Component {
+  static propTypes = {
+    name: PropTypes.string,
+    runStatus: PropTypes.number,
+    cmd: PropTypes.arrayOf(PropTypes.string),
+    runLogs: PropTypes.arrayOf(PropTypes.string)
+  };
+
   state = {};
 
   handleExpandClick = () => {
@@ -44,6 +45,20 @@ class ImageCard extends React.Component {
   };
 
   render() {
+    let avatarStyle;
+
+    switch (this.props.runStatus) {
+      case null:
+        avatarStyle = styles.avatar.pending;
+        break;
+      case 0:
+        avatarStyle = styles.avatar.success;
+        break;
+      default:
+        avatarStyle = styles.avatar.failed;
+        break;
+    }
+
     return (
       <Card style={styles.card}>
         <CardHeader
@@ -52,29 +67,21 @@ class ImageCard extends React.Component {
               docker run {this.props.name} {this.props.cmd.join(" ")}
             </pre>
           }
-          avatar={
-            <Avatar
-              aria-label="Recipe"
-              style={
-                this.props.runStatus === 0
-                  ? styles.avatar.success
-                  : styles.avatar.failed
-              }
-            />
-          }
+          avatar={<Avatar aria-label="Recipe" style={avatarStyle} />}
         />
-        {this.props.runLogs.length > 0 && (
-          <pre style={styles.logs}>{this.props.runLogs.join("\n")}</pre>
-        )}
+        {this.props.runLogs &&
+          this.props.runLogs.length > 0 && (
+            <pre style={styles.logs}>{this.props.runLogs.join("\n")}</pre>
+          )}
       </Card>
     );
   }
 }
 
 class CheckPage extends React.Component {
-  state = {
-    job: null,
-    error: null
+  static propTypes = {
+    job: PropTypes.object,
+    error: PropTypes.string
   };
 
   static async getInitialProps({ req }) {
@@ -107,9 +114,8 @@ class CheckPage extends React.Component {
                 key={index}
                 cmd={check.cmd}
                 name={check.name}
-                pullLogs={check.pull_logs}
                 runLogs={check.execution_logs}
-                runStatus={check.executation_status_code}
+                runStatus={check.execution_status_code}
               />
             ))}
           </div>

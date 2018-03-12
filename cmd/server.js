@@ -3,7 +3,6 @@ const api = require("../src/api");
 const express = require("express");
 const logger = require("../src/logger");
 const bodyParser = require("body-parser");
-const validate = require("express-validation");
 
 const server = express();
 const app = next({ dev: process.env.NODE_ENV !== "production" });

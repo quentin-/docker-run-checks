@@ -1,5 +1,3 @@
-const logger = require("../logger");
-
 class PullCommand {
   constructor(options) {
     this.docker = options.docker;

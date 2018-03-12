@@ -28,11 +28,10 @@ router.get("/checks/:id", (req, res) => {
 
     const checks = job.data.images.map(image => {
       let check = {
-        pull_logs: [],
         cmd: image.cmd,
         name: image.name,
-        execution_logs: [],
-        executation_status_code: null
+        execution: [],
+        execution_status_code: null
       };
 
       const progressData = job.progress_data || [];
@@ -43,7 +42,7 @@ router.get("/checks/:id", (req, res) => {
           ...check,
           download_logs: progress.pull.logs,
           execution_logs: progress.run.logs,
-          executation_status_code: progress.run.status_code
+          execution_status_code: progress.run.status_code
         };
       }
 

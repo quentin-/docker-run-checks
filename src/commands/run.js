@@ -1,5 +1,4 @@
-const logger = require("../logger");
-var streams = require("memory-streams");
+const streams = require("memory-streams");
 
 class RunCommand {
   constructor(options) {
