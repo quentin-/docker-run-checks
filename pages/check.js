@@ -16,9 +16,6 @@ const styles = {
     flexGrow: 1,
     padding: "12px"
   },
-  expandOpen: {
-    transform: "rotate(180deg)"
-  },
   avatar: {
     failed: {
       border: "1px solid #ff8989",
