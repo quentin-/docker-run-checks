@@ -14,7 +14,6 @@ const CheckWorker = require("./workers/check.js");
 
 const runner = new RunCommand({ docker });
 const puller = new PullCommand({ docker });
-
 const worker = new CheckWorker({ queue, puller, runner });
 
 worker.listen();

@@ -2,8 +2,6 @@ const kue = require("kue");
 const https = require("https");
 const queue = kue.createQueue();
 const logger = require("../logger");
-const RunCommand = require("../commands/run");
-const PullCommand = require("../commands/pull");
 
 class CheckWorker {
   constructor(options) {
