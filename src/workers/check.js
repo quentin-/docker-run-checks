@@ -8,7 +8,8 @@ const PullCommand = require("../commands/pull");
 class CheckWorker {
   constructor(options) {
     this.queue = options.queue;
-    this.docker = options.docker;
+    this.runner = new RunCommand({ docker: options.docker });
+    this.puller = new PullCommand({ docker: options.docker });
   }
 
   create(data) {
@@ -17,74 +18,32 @@ class CheckWorker {
 
   async perform(job, done) {
     logger.info(`at=check job_id=${job.id} start`);
-    logger.info(`at=check job_id=${job.id} image_pulling_started`);
 
-    let pullData;
-    let runData;
+    const executions = job.data.images.map(async image => {
+      const { cmd, name } = image;
 
-    function fail(e) {
-      logger.info(`at=check job_id=${job.id} failed`);
-      done(e.message ? e.message : e.toString());
-      return false;
-    }
+      const pull = await this.puller.execute(name);
+      const run = await this.runner.execute(name, cmd);
 
-    try {
-      pullData = await Promise.all(
-        job.data.images.map(image =>
-          new PullCommand({ docker: this.docker, name: image.name }).execute()
-        )
-      );
-    } catch (e) {
-      return fail(e);
-    }
-
-    logger.info(`at=check job_id=${job.id} image_pulling_done`);
-    logger.info(`at=check job_id=${job.id} image_run_started`);
-
-    try {
-      runData = await Promise.all(
-        job.data.images.map(image =>
-          new RunCommand({
-            cmd: image.cmd,
-            name: image.name,
-            docker: this.docker
-          }).execute()
-        )
-      );
-    } catch (e) {
-      return fail(e);
-    }
-
-    logger.info(`at=check job_id=${job.id} image_run_started_done`);
-
-    let success = true;
-    let data = {};
-
-    job.data.images.forEach((image, index) => {
-      data[image.uuid] = {
-        name: image.name,
-        run: runData[index],
-        pull: pullData[index]
-      };
-
-      if (runData[index].status_code !== 0) {
-        success = false;
-      }
+      return { uuid: image.uuid, pull, run };
     });
 
-    const hook = success
-      ? job.data.webhooks.success
-      : job.data.webhooks.failure;
+    try {
+      const results = await Promise.all(executions);
+      const success = results.every(result => result.run.status_code === 0);
 
-    logger.info(`at=check job_id=${job.id} hook=${hook}`);
+      job.progress(100, 100, results);
 
-    https
-      .get(hook, () => {
-        logger.info(`at=check job_id=_${job.id} done`);
-        job.progress(100, 100, data);
-        done();
-      })
-      .on("error", e => done(e));
+      const hook = success
+        ? job.data.webhooks.success
+        : job.data.webhooks.failure;
+
+      https.get(hook, () => done()).on("error", e => done(e));
+      logger.info(`at=check job_id=${job.id} done`);
+      done();
+    } catch (e) {
+      done(e);
+    }
   }
 
   listen() {

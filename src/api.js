@@ -22,16 +22,19 @@ router.get("/checks/:id", (req, res) => {
       return;
     }
 
+    console.log(job);
+
     const checks = job.data.images.map(image => {
       let check = {
+        pull_logs: [],
         cmd: image.cmd,
         name: image.name,
-        pull_logs: [],
         execution_logs: [],
         executation_status_code: null
       };
 
-      const progress = (job.progress_data || {})[image.uuid];
+      const progressData = job.progress_data || [];
+      const progress = progressData.find(p => p.uuid === image.uuid);
 
       if (progress) {
         check = {
@@ -46,10 +49,10 @@ router.get("/checks/:id", (req, res) => {
     });
 
     return res.status(200).send({
+      checks: checks,
       state: job._state,
       created_at: job.created_at,
-      updated_at: job.updated_at,
-      checks: checks
+      updated_at: job.updated_at
     });
   });
 });

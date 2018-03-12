@@ -2,14 +2,13 @@ const logger = require("../logger");
 
 class PullCommand {
   constructor(options) {
-    this.name = options.name;
     this.docker = options.docker;
   }
 
-  execute() {
+  execute(name) {
     return new Promise((resolve, reject) => {
       this.logs = [];
-      this.docker.pull(this.name, (err, stream) => {
+      this.docker.pull(name, (err, stream) => {
         if (err) {
           reject(err);
           return;
@@ -26,7 +25,7 @@ class PullCommand {
           },
           event => {
             if (event.status) {
-              logger.info(`${this.name} ${event.status}`);
+              logger.info(`${name} ${event.status}`);
               this.logs.push(event.status);
             }
           }
