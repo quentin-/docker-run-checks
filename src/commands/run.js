@@ -10,7 +10,7 @@ class RunCommand {
     return new Promise((resolve, reject) => {
       const writer = new streams.WritableStream();
 
-      this.docker.run(name, cmd, writer, (err, data, container) => {
+      this.docker.run(name, cmd, writer, (err, data) => {
         if (err) {
           resolve({
             status_code: err.statusCode,

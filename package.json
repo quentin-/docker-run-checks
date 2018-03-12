@@ -4,6 +4,7 @@
   "author": "Quentin Cuvillier <cuvillier.quentin@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "test": "yarn jest",
     "start": "nodemon cmd/server.js",
     "start:prod": "yarn next build && node cmd/server.js",
     "prettier:check": "prettier-check 'src/**/*.js' '*.js'",
@@ -29,6 +30,7 @@
     "winston": "^3.0.0-rc2"
   },
   "devDependencies": {
+    "jest": "^22.4.2",
     "nodemon": "^1.17.1",
     "prettier": "^1.11.1"
   }

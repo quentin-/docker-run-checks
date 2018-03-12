@@ -25,7 +25,6 @@ class PullCommand {
           },
           event => {
             if (event.status) {
-              logger.info(`${name} ${event.status}`);
               this.logs.push(event.status);
             }
           }
