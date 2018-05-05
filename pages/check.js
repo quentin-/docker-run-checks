@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import fetch from "isomorphic-unfetch";
-import Avatar from "material-ui/Avatar";
-import Card, { CardHeader } from "material-ui/Card";
 
 const styles = {
   root: {
