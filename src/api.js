@@ -5,8 +5,13 @@ const express = require("express");
 const Docker = require("dockerode");
 
 const docker = new Docker();
-const queue = kue.createQueue();
 const router = express.Router();
+
+const queue = kue.createQueue({
+  redis: {
+    host: process.env.REDIS_HOST
+  }
+});
 
 const RunCommand = require("./commands/run");
 const PullCommand = require("./commands/pull");

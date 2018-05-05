@@ -38,6 +38,7 @@ class CheckWorker {
       logger.info(`at=check job_id=${job.id} done`);
       done();
     } catch (e) {
+      console.log(e);
       done(e);
     }
   }

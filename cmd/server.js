@@ -17,5 +17,5 @@ app.prepare().then(() => {
 
   server.use("/api/v1", api);
   server.get("*", (req, res) => handle(req, res));
-  server.listen(3000, () => logger.info("Example app listening on port 3000!"));
+  server.listen(process.env.PORT, () => logger.info(`listening on port ${process.env.PORT}`));
 });

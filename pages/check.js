@@ -9,24 +9,39 @@ const styles = {
     flexGrow: 1,
     padding: "12px"
   },
-  avatar: {
-    pending: {
-      backgroundColor: "#fff78c"
-    },
-    failed: {
-      backgroundColor: "#ffb2b2"
-    },
-    success: {
-      backgroundColor: "#b2ffbd"
-    }
-  },
-  logs: {
+  logsContainer: {
     color: "#fff",
-    padding: "12px",
+    marginTop: "12px",
     backgroundColor: "#000"
   },
+  logs: {
+    margin: 0,
+    padding: "12px"
+  },
   cardTitle: {
-    fontSize: "20px"
+    fontSize: "16px"
+  },
+  cardSuccess: {
+    borderLeft: "5px solid #42c88a",
+    marginBottom: "20px"
+  },
+  cardFailed: {
+    borderLeft: "5px solid #c84141",
+    marginBottom: "20px"
+  },
+  cardContent: {
+    padding: "12px",
+    border: "1px #e3e3e3",
+    borderStyle: "solid solid solid none"
+  },
+  header: {
+    fontWeight: 600,
+    color: "#555",
+    display: "flex",
+    alignItems: "center"
+  },
+  expand: {
+    cursor: "pointer"
   }
 };
 
@@ -38,36 +53,37 @@ class ImageCard extends React.Component {
     runLogs: PropTypes.arrayOf(PropTypes.string)
   };
 
+  state = {
+    expanded: false
+  };
+
   render() {
-    let avatarStyle;
-
-    switch (this.props.runStatus) {
-      case null:
-        avatarStyle = styles.avatar.pending;
-        break;
-      case 0:
-        avatarStyle = styles.avatar.success;
-        break;
-      default:
-        avatarStyle = styles.avatar.failed;
-        break;
-    }
-
     return (
-      <Card style={styles.card}>
-        <CardHeader
-          title={
-            <pre style={styles.cardTitle}>
-              docker run {this.props.name} {this.props.cmd.join(" ")}
-            </pre>
-          }
-          avatar={<Avatar aria-label="Recipe" style={avatarStyle} />}
-        />
-        {this.props.runLogs &&
-          this.props.runLogs.length > 0 && (
-            <pre style={styles.logs}>{this.props.runLogs.join("\n")}</pre>
-          )}
-      </Card>
+      <div
+        style={
+          this.props.runStatus === 0 ? styles.cardSuccess : styles.cardFailed
+        }
+      >
+        <div style={styles.cardContent}>
+          <div style={styles.header}>
+            <span
+              style={styles.expand}
+              onClick={() => this.setState({ expanded: !this.state.expanded })}
+            >
+              ➕
+            </span>{" "}
+            {this.props.name} {this.props.cmd.join(" ")}
+          </div>
+
+          {this.props.runLogs &&
+            this.props.runLogs.length > 0 &&
+            this.state.expanded && (
+              <div style={styles.logsContainer}>
+                <pre style={styles.logs}>{this.props.runLogs.join("\n")}</pre>
+              </div>
+            )}
+        </div>
+      </div>
     );
   }
 }
@@ -102,17 +118,15 @@ class CheckPage extends React.Component {
 
       return (
         <div style={styles.root}>
-          <div style={styles.content}>
-            {checks.map((check, index) => (
-              <ImageCard
-                key={index}
-                cmd={check.cmd}
-                name={check.name}
-                runLogs={check.execution_logs}
-                runStatus={check.execution_status_code}
-              />
-            ))}
-          </div>
+          {checks.map((check, index) => (
+            <ImageCard
+              key={index}
+              cmd={check.cmd}
+              name={check.name}
+              runLogs={check.execution_logs}
+              runStatus={check.execution_status_code}
+            />
+          ))}
         </div>
       );
     }

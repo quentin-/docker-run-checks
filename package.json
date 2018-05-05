@@ -7,8 +7,9 @@
     "test": "yarn jest",
     "lint": "eslint src cmd pages",
     "start": "nodemon cmd/server.js",
-    "start:prod": "yarn next build && node cmd/server.js",
-    "prettier:fix": "yarn prettier --write 'src/**/*.js' '*.js'"
+    "build:prod": "yarn next build",
+    "start:prod": "node cmd/server.js",
+    "prettier:fix": "yarn prettier --write '{src,pages}/**/*.js' '*.js'"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
