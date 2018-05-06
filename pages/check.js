@@ -22,7 +22,8 @@ class ImageCard extends React.Component {
       <div
         className={cx(css.card, {
           [css.cardSuccess]: this.props.runStatus === 0,
-          [css.cardFailure]: this.props.runStatus !== 0
+          [css.cardFailure]: this.props.runStatus !== 0,
+          [css.cardPending]: this.props.runStatus === null
         })}>
         <div className={css.cardContent}>
           <div

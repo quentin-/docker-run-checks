@@ -14,12 +14,12 @@ curl -X POST http://localhost:5000/api/v1/checks \
      -d '{
            "images": [
              {
-               "name": "ubuntu:latest",
-               "cmd": [ "ls", "/bin" ]
+               "name": "node:7.0.0",
+               "cmd": [ "node", "-p", "function f(a = 0){}" ]
              },
              {
-               "name": "ubuntu:latest",
-               "cmd": [ "ls", "/foo" ]
+               "name": "node:0.12.18",
+               "cmd": [ "node", "-p", "function f(a = 0){}" ]
              }
            ],
            "webhooks": {
@@ -29,4 +29,4 @@ curl -X POST http://localhost:5000/api/v1/checks \
          }'
 ```
 
-<img width="1026" alt="screen shot 2018-05-05 at 4 07 10 pm" src="https://user-images.githubusercontent.com/2709086/39668285-763b338a-507e-11e8-85ed-bd1bf5438104.png">
+<img width="1232" alt="screen shot 2018-05-05 at 8 55 09 pm" src="https://user-images.githubusercontent.com/2709086/39669639-a1556ea0-50a6-11e8-83db-94d5635f3f0c.png">
