@@ -1,0 +1,56 @@
+.root {
+  flex-grow: 1;
+  padding: 12px;
+}
+
+.logContainer {
+  color: #fff;
+  margin-top: 12px;
+  background-color: #000;
+}
+
+.logs {
+  margin: 0;
+  padding: 12px;
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+.cardSuccess {
+  border-left: 5px solid #42c88a;
+}
+
+.cardFailure {
+  border-left: 5px solid #c84141;
+}
+
+.cardContent {
+  padding: 12px;
+  border: 1px #e3e3e3;
+  border-style: solid solid solid none;
+}
+
+.header {
+  color: #555;
+  display: flex;
+  font-weight: 600;
+  align-items: center;
+}
+
+.expandButton {
+  top: 1px;
+  cursor: pointer;
+  margin-right: 6px;
+  position: relative;
+  transition: transform 0.1s linear;
+}
+
+.expandButtonCollapsed {
+  transform: rotate(0deg);
+}
+
+.expandButtonExpanded {
+  transform: rotate(90deg);
+}

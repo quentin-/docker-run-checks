@@ -1,47 +1,9 @@
 import React from "react";
+import cx from "classnames";
 import PropTypes from "prop-types";
 import fetch from "isomorphic-unfetch";
 
-const styles = {
-  root: {
-    flexGrow: 1,
-    padding: "12px"
-  },
-  logsContainer: {
-    color: "#fff",
-    marginTop: "12px",
-    backgroundColor: "#000"
-  },
-  logs: {
-    margin: 0,
-    padding: "12px"
-  },
-  cardTitle: {
-    fontSize: "16px"
-  },
-  cardSuccess: {
-    borderLeft: "5px solid #42c88a",
-    marginBottom: "20px"
-  },
-  cardFailed: {
-    borderLeft: "5px solid #c84141",
-    marginBottom: "20px"
-  },
-  cardContent: {
-    padding: "12px",
-    border: "1px #e3e3e3",
-    borderStyle: "solid solid solid none"
-  },
-  header: {
-    fontWeight: 600,
-    color: "#555",
-    display: "flex",
-    alignItems: "center"
-  },
-  expand: {
-    cursor: "pointer"
-  }
-};
+import css from "../styles/check.css";
 
 class ImageCard extends React.Component {
   static propTypes = {
@@ -58,17 +20,20 @@ class ImageCard extends React.Component {
   render() {
     return (
       <div
-        style={
-          this.props.runStatus === 0 ? styles.cardSuccess : styles.cardFailed
-        }
-      >
-        <div style={styles.cardContent}>
-          <div style={styles.header}>
+        className={cx(css.card, {
+          [css.cardSuccess]: this.props.runStatus === 0,
+          [css.cardFailure]: this.props.runStatus !== 0
+        })}>
+        <div className={css.cardContent}>
+          <div
+            className={css.header}
+            onClick={() => this.setState({ expanded: !this.state.expanded })}>
             <span
-              style={styles.expand}
-              onClick={() => this.setState({ expanded: !this.state.expanded })}
-            >
-              ➕
+              className={cx(css.expandButton, {
+                [css.expandButtonExpanded]: this.state.expanded,
+                [css.expandButtonCollapsed]: !this.state.expanded
+              })}>
+              ➡
             </span>{" "}
             {this.props.name} {this.props.cmd.join(" ")}
           </div>
@@ -76,8 +41,8 @@ class ImageCard extends React.Component {
           {this.props.runLogs &&
             this.props.runLogs.length > 0 &&
             this.state.expanded && (
-              <div style={styles.logsContainer}>
-                <pre style={styles.logs}>{this.props.runLogs.join("\n")}</pre>
+              <div className={css.logContainer}>
+                <pre className={css.logs}>{this.props.runLogs.join("\n")}</pre>
               </div>
             )}
         </div>
@@ -111,11 +76,19 @@ class CheckPage extends React.Component {
   render() {
     const { job, error } = this.props;
 
+    if (error) {
+      return (
+        <div>
+          <p>{error.toString()}</p>
+        </div>
+      );
+    }
+
     if (job) {
       const { checks } = job;
 
       return (
-        <div style={styles.root}>
+        <div className={css.root}>
           {checks.map((check, index) => (
             <ImageCard
               key={index}
@@ -125,14 +98,6 @@ class CheckPage extends React.Component {
               runStatus={check.execution_status_code}
             />
           ))}
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <div>
-          <p>{error.toString()}</p>
         </div>
       );
     }

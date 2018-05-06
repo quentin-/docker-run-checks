@@ -1,7 +1,6 @@
 FROM node:9.11.1
 
 RUN apt-get update
-RUN apt-get install docker docker.io
 RUN npm install -g yarnpkg
 RUN mkdir -p /home/app
 
