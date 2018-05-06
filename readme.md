@@ -29,4 +29,4 @@ curl -X POST http://localhost:5000/api/v1/checks \
          }'
 ```
 
-<img width="1232" alt="screen shot 2018-05-05 at 8 55 09 pm" src="https://user-images.githubusercontent.com/2709086/39669639-a1556ea0-50a6-11e8-83db-94d5635f3f0c.png">
+<img width="943" alt="screen shot 2018-05-05 at 9 03 46 pm" src="https://user-images.githubusercontent.com/2709086/39669665-d3262ab8-50a7-11e8-89a4-31ab719430ee.png">
